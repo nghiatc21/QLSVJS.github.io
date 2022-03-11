@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="panel">
+        <div class="panel-heading">
+            Input product detail infomation
+        </div>
+        <div class="panel-body">
+            <form method="post">
+                <div class="panel-body__item">
+                    <p>Product Name:</p>
+                    <input type="text" class="from-control" id = "product-name" placeholder="Enter product name">
+                </div>
+                <div class="panel-body__item">
+                    <p>Menufacturer Name:</p>
+                    <select id="menufacturer-name" class="from-control" onchange="changMenufacturer()">
+                        <option value="">-- Chose --</option>
+                    </select>
+                </div>
+                <div class="panel-body__item">
+                    <p>Categlory Name:</p>
+                    <select id="categlory-name" class="from-control"></select>
+                </div>
+                <div class="panel-body__item">
+                    <p>Price:</p>
+                    <input type="number" class="from-control" id = "price" placeholder="Enter product price" value="0"
+                    onkeyup="updateTotalPrice()">
+                </div>
+                <div class="panel-body__item">
+                    <p>Quantity:</p>
+                    <input type="text" class="from-control" id = "quantity" placeholder="Enter quantity" value="0"
+                    onkeyup="updateTotalPrice()">
+                </div>
+                <div class="panel-body__item">
+                    <p>Total Price:</p>
+                    <input type="text" class="from-control" disabled="true" id = "total-price" value="0">
+                </div>
+                <div class="panel-body__item btn-item">
+                    <button type="button" class="btn btn-success" onclick="addProduct()" style="background-color: rgb(58, 223, 58);">Add produce</button>
+                    <button type="reset" class="btn btn-danger" onclick="reset()" style="background-color: rgb(224, 88, 88);">Reset</button>
+                </div>
+            </form>
+        </div>
+        <div class="product-list">
+            Product List
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Product Name</th>
+                    <th>Menufacturer Nam</th>
+                    <th>Categlory Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="result"></tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        var projectList = []
+        const menufacturerList = {
+            "Apple": [
+                "Iphone 5",
+                "Iphone 6",
+                "Iphone 7",
+                "Iphone 8",
+                "Iphone 10",
+                "Iphone 11",
+                "Iphone 12",
+                "Iphone 13"
+            ],
+            "SamSung": [
+                "Galaxy S21",
+                "Galaxy Z Fold3"
+            ],
+            "HuaWei": [
+                "HUAWEI Mate 30 Pro",
+                "HUAWEI Mate 20 Pro",
+                "HUAWEI Mate 20 X",
+                "HUAWEI Mate 20",
+            ]
+        }
+        const menufacturerTag = document.getElementById('menufacturer-name')
+        for(var key in menufacturerList){
+            menufacturerTag.innerHTML += `<option value = '${key}'>
+                    ${key}
+                </option>`
+        }
+        function changMenufacturer(){
+            key = menufacturerTag.value
+            categoryList = menufacturerList[key]
+            console.log(categoryList)
+            var categloryTag = document.getElementById('categlory-name')
+            categloryTag.innerHTML = ''
+            if(categoryList != null){
+                for(var i = 0; i < categoryList.length; i++){
+                    categloryTag.innerHTML += `<option value = '${categoryList[i]}'>
+                            ${categoryList[i]}
+                        </option>`
+                }
+            }
+
+        }
+        function updateTotalPrice(){
+            const price = document.getElementById('price').value
+            const quantity = document.getElementById('quantity').value
+
+            TotalPrice = price * quantity
+
+            document.getElementById('total-price').value = TotalPrice
+        }
+        var count = 0;
+        function addProduct(){
+            var productName = document.getElementById('product-name').value
+            var menufacturerName = document.getElementById('menufacturer-name').value
+            var categloryName= document.getElementById('categlory-name').value
+            var price = document.getElementById('price').value
+            var quantity = document.getElementById('quantity').value
+            var totalPrice = document.getElementById('total-price').value
+            
+            var product = {
+                'productName': productName,
+                'menufacturerName': menufacturerName,
+                'categloryName': categloryName,
+                'price': price,
+                'quantity': quantity,
+                'totalPrice': totalPrice,
+
+            }
+            projectList.push(product)
+            console.log(projectList)
+            document.getElementById('result').innerHTML += `<tr>
+                    <td>${++count}</td>
+                    <td>${productName}</td>
+                    <td>${menufacturerName}</td>
+                    <td>${categloryName}</td>
+                    <td>${price}</td>
+                    <td>${quantity}</td>
+                    <td>${totalPrice}</td>
+                    <td><button>Edit</button></td>
+                    <td><button onclick = "deleteProduct(${count - 1})">Delete</button></td>
+                </tr>`
+        }
+        function deleteProduct(index){
+            console.log(index)
+            projectList.splice(index, 1)
+            showProduct()
+        }
+        function showProduct(){
+            document.getElementById('result').innerHTML =''
+            for (var i = 0; i < projectList.length; i++) {
+                document.getElementById('result').innerHTML += `<tr>
+                    <td>${i+1}</td>
+                    <td>${projectList[i].productName}</td>
+                    <td>${projectList[i].menufacturerName}</td>
+                    <td>${projectList[i].categloryName}</td>
+                    <td>${projectList[i].price}</td>
+                    <td>${projectList[i].quantity}</td>
+                    <td>${projectList[i].totalPrice}</td>
+                    <td><button>Edit</button></td>
+                    <td onclick = "deleteProduct(${i})"><button>Delete</button></td>
+                </tr>`
+                
+            }
+        }
+    </script>
+</body>
+</html>
